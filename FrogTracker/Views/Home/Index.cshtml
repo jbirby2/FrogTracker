@@ -58,13 +58,24 @@
                         </center>
                     </div>
                 </div>
-                <div id="selectedItemLazLinkRow" class="row" style="display:none;">
-                    <div class="col-xs-12">
-                        <center>
-                            <h4>
-                                <a id="selectedItemLazLink" target="lazLinkWindow"></a>
-                            </h4>
-                        </center>
+                <div id="selectedItemExternalLinksRow" class="row" style="display:none;">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <center>
+                                <h4>
+                                    <a id="selectedItemLiveAuctionsLink" target="wndLiveAuctions"></a>
+                                </h4>
+                            </center>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <center>
+                                <h4>
+                                    <a id="selectedItemDetailsLink" target="wndItemDetails"></a>
+                                </h4>
+                            </center>
+                        </div>
                     </div>
                 </div>
                 <div id="historyDiv" class="row" style="display:none;">
@@ -275,12 +286,18 @@
             color: #ff5f00;
         }
 
+        a:focus {
+            text-decoration: none;
+        }
+
         a:visited {
             color: #ff5f00;
+            text-decoration: none;
         }
 
         a:hover {
             color: #00fff7;
+            text-decoration: none;
         }
 
         .body-content {
@@ -458,7 +475,7 @@
                 }
                 else {
                     $("#selectedItemNameRow").hide();
-                    $("#selectedItemLazLinkRow").hide();
+                    $("#selectedItemExternalLinksRow").hide();
                     $("#historyDiv").hide();
                 }
             });
@@ -466,7 +483,7 @@
             $("#searchResetButton").click(function () {
                 loadedItem = null;
                 $("#selectedItemNameRow").hide();
-                $("#selectedItemLazLinkRow").hide();
+                $("#selectedItemExternalLinksRow").hide();
                 $("#historyDiv").hide();
                 $("#searchResults").empty();
                 $("#searchBox").val("");
@@ -694,14 +711,19 @@
 
                     // Rebuild the item stats table
                     if (!result.itemStats) {
-                        $("#selectedItemLazLinkRow").hide();
+                        $("#selectedItemExternalLinksRow").hide();
                         $("#itemStatsWrapper").hide();
                     }
                     else {
-                        var lazUrl = "https://www.lazaruseq.com/Alla/?a=item&id=" + result.itemStats.stats[0].parsedStatValue;
-                        $("#selectedItemLazLinkRow").show();
-                        $("#selectedItemLazLink").attr("href", lazUrl);
-                        $("#selectedItemLazLink").text(lazUrl);
+                        $("#selectedItemExternalLinksRow").show();
+
+                        var itemDetailsUrl = "https://www.lazaruseq.com/Alla/?a=item&id=" + encodeURIComponent(result.itemStats.stats[0].parsedStatValue);
+                        $("#selectedItemDetailsLink").attr("href", itemDetailsUrl);
+                        $("#selectedItemDetailsLink").text("Magelo Item Page");
+
+                        var liveAuctionsUrl = "https://www.lazaruseq.com/Magelo/index.php?page=bazaar&class=-1&race=-1&stat=-1&slot=-1&aug_type=2147483647&type=-1&pricemin=&pricemax=&item=" + encodeURIComponent(result.itemName) + "&start=0&trader=&direction=ASC&orderby=tradercost";
+                        $("#selectedItemLiveAuctionsLink").attr("href", liveAuctionsUrl);
+                        $("#selectedItemLiveAuctionsLink").text("Magelo Live Auctions");
 
                         $("#itemStatsWrapper").empty();
                         $("#itemStatsWrapper").show();
