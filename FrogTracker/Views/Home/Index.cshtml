@@ -1,0 +1,946 @@
+﻿@model FrogTracker.Models.IndexModel
+
+<div class="row">
+    <div class="col-xs-12">
+        <center>
+            <img src="@Url.Content("~/images/logo_top.png")" />
+        </center>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <center>
+            <h3>Oh hullo there, welcome to FrogTracker.  For frog eyes only!!</h3>
+        </center>
+        <br /><br />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <ul class="nav nav-pills nav-justified topNav">
+            <li class="active">
+                <a id="itemLookupTabLink" data-toggle="pill" href="#ItemLookup">Item Lookup</a>
+            </li>
+            <li>
+                <a data-toggle="pill" href="#HotDealz">Hot Dealz</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+
+            <div id="ItemLookup" class="tab-pane in active">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <center>
+                            <h1>Item Lookup</h1>
+                        </center>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-11">
+                        <input id="searchBox" type="text" class="form-control" placeholder="Start typing an item name to search" maxlength="500" />
+                    </div>
+                    <div class="col-xs-1">
+                        <button id="searchResetButton" type="button" class="btn">Reset</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-11">
+                        <div id="searchResults" class="col-xs-12 searchResults">
+                        </div>
+                    </div>
+                </div>
+                <div id="selectedItemNameRow" class="row" style="display:none;">
+                    <div class="col-xs-12">
+                        <center>
+                            <h2 id="selectedItemNameDiv"></h2>
+                        </center>
+                    </div>
+                </div>
+                <div id="selectedItemLazLinkRow" class="row" style="display:none;">
+                    <div class="col-xs-12">
+                        <center>
+                            <h4>
+                                <a id="selectedItemLazLink" target="lazLinkWindow"></a>
+                            </h4>
+                        </center>
+                    </div>
+                </div>
+                <div id="historyDiv" class="row" style="display:none;">
+                    <div class="col-xs-6">
+                        <table id="selectedItemHistoryTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Price</th>
+                                    <th scope="col" class="historyRowForSaleNow">Still for sale as of <span id="minutesSinceLastScrapeSpan"></span> ago?</th>
+                                    <th scope="col">Seller</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"></th>
+                                            <th scope="col">Lowest Price</th>
+                                            <th scope="col">Median Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th>Past 7 days</th>
+                                            <td id="sevenDayLowestCell"></td>
+                                            <td id="sevenDayMedianCell"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Past 30 days</th>
+                                            <td id="thirtyDayLowestCell"></td>
+                                            <td id="thirtyDayMedianCell"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Past 90 days</th>
+                                            <td id="ninetyDayLowestCell"></td>
+                                            <td id="ninetyDayMedianCell"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Past year</th>
+                                            <td id="oneYearLowestCell"></td>
+                                            <td id="oneYearMedianCell"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>All time</th>
+                                            <td id="lifetimeLowestCell"></td>
+                                            <td id="lifetimeMedianCell"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div id="itemStatsWrapper" class="col-xs-12">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="HotDealz" class="tab-pane">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <center>
+                            <h1>Hot Dealz!!!</h1>
+                            <h4>For sale in bazaar right now!</h4>
+                        </center>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                    </div>
+                    <div class="col-xs-2">
+                        <select id="timeframeDropdown" class="form-control" onchange="refreshHotDealz();">
+                            <option value="7day">Past 7 days</option>
+                            <option value="30day">Past 30 days</option>
+                            <option value="90day">Past 90 days</option>
+                            <option value="1year">Past year</option>
+                            <option value="lifetime">All time</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-2">
+                        <button id="dealzResetButton" type="button" class="btn">Reset All Filters</button>
+                    </div>
+                    <div class="col-xs-4">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table id="hotDealzTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Lowest Price</th>
+                                    <th scope="col">Amount Above Lowest</th>
+                                    <th scope="col">Percent Above Lowest</th>
+                                    <th scope="col">Median Price</th>
+                                    <th scope="col">Amount Below Median</th>
+                                    <th scope="col">Percent Below Median</th>
+                                    <th scope="col">Seller</th>
+                                </tr>
+                                <tr class="dealzFilterRow">
+                                    <th></th>
+                                    <th>
+                                        <input id="minPriceBox" type="number" class="form-control" placeholder="No Min" min="0" step="1" onchange="refreshHotDealz();" />
+                                    </th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>
+                                        <input id="minAmountBelowMedianBox" type="number" class="form-control" min="0" step="1" placeholder="No Min" onchange="refreshHotDealz();" />
+                                    </th>
+                                    <th>
+                                        <input id="minPercentBelowMedianBox" type="number" class="form-control" min="0" step="1" placeholder="No Min" onchange="refreshHotDealz();" />
+                                    </th>
+                                    <th></th>
+                                </tr>
+                                <tr class="dealzFilterRow">
+                                    <th></th>
+                                    <th>
+                                        <input id="maxPriceBox" type="number" class="form-control" placeholder="No Max" min="0" step="1" onchange="refreshHotDealz();" />
+                                    </th>
+                                    <th></th>
+                                    <th>
+                                        <input id="maxAmountAboveLowestBox" type="number" class="form-control" placeholder="No Max" min="0" step="1" onchange="refreshHotDealz();" />
+                                    </th>
+                                    <th>
+                                        <input id="maxPercentAboveLowestBox" type="number" class="form-control" placeholder="No Max" min="0" step="1" onchange="refreshHotDealz();" />
+                                    </th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section css {
+    <style>
+
+        /* overriding bootstrap classes*/
+
+        .nav-pills > li.active > a,
+        .nav-pills > li.active > a:hover {
+            background-color: #e35500 !important;
+            color: #ffffff;
+        }
+
+        .nav-pills > li > a,
+        .nav-pills > li > a:hover {
+            background-color: #415c0d !important;
+            color: #ffffff;
+        }
+
+        .form-control {
+            background-color: #629200;
+            color: #ffffff;
+        }
+
+        .form-control::placeholder {
+            color: #d4d4d4;
+        }
+
+        .btn, .btn:hover, .btn:visited {
+            background-color: #e35500;
+            color: #ffffff;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        .tooltip.in {
+            opacity: 1;
+            filter: alpha(opacity=100);
+        }
+
+        .tooltip-inner {
+            min-width: 400px !important;
+            max-width: 100% !important;
+            text-align: left !important;
+        }
+
+        /* custom classes */
+
+        body {
+            padding-top: 10px;
+            padding-bottom: 20px;
+            background-color: #004008;
+            color: #ffffff;
+        }
+
+        .body-content {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .searchResults {
+        }
+
+        .noItemsFoundMessage {
+            color: #bdc9c1;
+        }
+
+        .searchResultsLink {
+            color: #78ffce;
+            background-color: #415c0d;
+            margin-right: 10px;
+        }
+
+        .searchResultsLink:visited {
+            color: #78ffce;
+            background-color: #006e0e;
+            margin-right: 10px;
+        }
+
+        .searchResultsLink:hover {
+            color: #ffffff;
+            background-color: #006e0e;
+            margin-right: 10px;
+        }
+
+        .selectedItemNameRow {
+            margin-top: 25px;
+        }
+
+        #selectedItemNameDiv {
+            color: #78ffce;
+        }
+
+        .historyRow {
+            background-color: #006e0e;
+        }
+
+        .historyRowAlt {
+            background-color: #207d2c;
+        }
+
+        .historyRowForSaleNow {
+            font-weight: bold;
+            color: #ffe98f;
+        }
+
+        .historyRowExpired {
+        }
+
+        .historyDateRow {
+            text-align: center;
+            color: #ffffff;
+            background-color: #b34300;
+            font-weight: bold;
+        }
+
+        .forSaleNow {
+            color: #fff700;
+            font-size: 1.2em;
+        }
+
+        .dealzFilterRow > th {
+            border-top: none !important;
+            border-bottom: none !important;
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+        }
+
+        .dealzRow {
+            background-color: #006e0e;
+        }
+
+        .dealzRowAlt {
+            background-color: #207d2c;
+        }
+
+        .dealzLink {
+            color: #78ffce;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .dealzLink:visited {
+            color: #feff96;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .dealzLink:hover {
+            color: #ffffff;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .itemStatsItemNameRow {
+            background-color: #000000;
+            color: #78ffce;
+        }
+
+        .itemStatsRow {
+            background-color: #000000;
+        }
+
+        .itemStatsRow > div:first-child {
+            color: #dedede;
+        }
+
+        .itemStatsAltRow {
+            background-color: #121212;
+        }
+
+        .itemStatsAltRow > div:first-child {
+            color: #dedede;
+        }
+
+        .itemStatsTooltipItemNameRow {
+            background-color: #000000;
+            margin-left: -7px;
+            margin-right: -7px;
+            color: #78ffce;
+        }
+
+        .itemStatsTooltipRow {
+            background-color: #000000;
+            margin-left: -7px;
+            margin-right: -7px;
+        }
+
+        .itemStatsTooltipRow > div:first-child {
+            color: #dedede;
+        }
+
+        .itemStatsTooltipAltRow {
+            background-color: #121212;
+            margin-left: -7px;
+            margin-right: -7px;
+        }
+
+        .itemStatsTooltipAltRow > div:first-child {
+            color: #dedede;
+        }
+
+    </style>
+}
+
+@section scripts {
+
+    <script>
+
+        var searchDebounceTimeout = null;
+        
+        var loadedItem = null;
+        
+        $(document).ready(function () {
+
+            window.addEventListener("popstate", function (event) {
+                if (event.state) {
+                    $("#itemLookupTabLink").click();
+                    populateItemHistory(event.state.itemName, null);
+                }
+                else {
+                    $("#selectedItemNameRow").hide();
+                    $("#selectedItemLazLinkRow").hide();
+                    $("#historyDiv").hide();
+                }
+            });
+
+            $("#searchResetButton").click(function () {
+                loadedItem = null;
+                $("#selectedItemNameRow").hide();
+                $("#selectedItemLazLinkRow").hide();
+                $("#historyDiv").hide();
+                $("#searchResults").empty();
+                $("#searchBox").val("");
+
+                setTimeout(function () { $("#searchBox").focus(); }, 100);
+            });
+
+            $("#dealzResetButton").click(function () {
+                loadConfig(getDefaultConfig());
+                refreshHotDealz();
+            });
+
+            $("#searchBox").keyup(function () {
+
+                if (searchDebounceTimeout != null)
+                    clearTimeout(searchDebounceTimeout);
+
+                searchDebounceTimeout = setTimeout(function () {
+
+                    var searchString = $("#searchBox").val().trim();
+
+                    if (searchString.trim().length < 3) {
+                        $("#searchResults").empty();
+                    }
+                    else {
+                        $.ajax({
+                            url: '@Url.Action("Search", "Home")?searchString=' + encodeURIComponent(searchString),
+
+                            success: function (result) {
+                                var exactMatch = null;
+
+                                var $searchResults = $("#searchResults");
+                                $searchResults.empty();
+                                if (result.itemNames.length == 0) {
+                                    $searchResults.append($("<span class='noItemsFoundMessage'>No matches found for \"" + encodeHtml(result.searchString) + "\"</span>"));
+                                }
+                                else {
+                                    // create a dictionary of the item stats to use in the code below instead of looping through the array over and over, for a little javascript performance optimization
+                                    var itemStatsDict = {};
+                                    for (var i = 0; i < result.itemStats.length; i++) {
+                                        itemStatsDict[result.itemStats[i].itemName] = result.itemStats[i];
+                                    }
+
+                                    for (var i = 0; i < result.itemNames.length; i++) {
+                                        var $itemLink = $("<a class='badge searchResultsLink' data-toggle='tooltip'>" + encodeHtml(result.itemNames[i]) + "</a>");
+                                        $itemLink.data("itemName", result.itemNames[i]);
+                                        $itemLink.click(function () {
+                                            populateItemHistory($(this).data("itemName"), "push");
+                                            setTimeout(function () { $("#searchBox").focus(); }, 100);
+                                        });
+
+                                        // if we have stats for this item, then build a hover tooltip to display them
+                                        if (itemStatsDict[result.itemNames[i]]) {
+                                            $itemLink.tooltip({
+                                                "html": true,
+                                                "placement": "auto",
+                                                "title": buildItemStatsTooltipHtml(itemStatsDict[result.itemNames[i]])
+                                            });
+                                        }
+
+                                        $searchResults.append($itemLink);
+
+                                        if (result.itemNames[i].toLowerCase() == result.searchString.toLowerCase())
+                                            exactMatch = result.itemNames[i];
+                                    }
+                                }
+
+                                if (result.itemNames.length == 1)
+                                    populateItemHistory(result.itemNames[0], "push");
+                                else if (exactMatch != null)
+                                    populateItemHistory(exactMatch, "push");
+                            }
+                        });
+                    }
+                }, 500);
+            });
+
+            $("#itemLookupTabLink").click(function () {
+                setTimeout(function () { $("#searchBox").focus(); }, 1);
+            });
+
+            var existingConfigJson = localStorage.getItem("config");
+            if (existingConfigJson) {
+                // Load pre-existing config values
+                loadConfig(JSON.parse(existingConfigJson));
+            }
+            else {
+                // Load default config values
+                loadConfig(getDefaultConfig());
+            }
+
+            // Set initial focus on searchBox
+            setTimeout(function () { $("#searchBox").focus(); }, 100);
+
+            @if (Model.ItemName != null)
+            {
+                @:// Load the intial item history
+                @:populateItemHistory("@Model.ItemName.Replace("\"", "\\\"")", "replace");
+            }
+
+            // Load the initial hot dealz
+            refreshHotDealz();
+
+            // Automatically refresh hot dealz every 10 minutes
+            setInterval(function () { refreshHotDealz(); }, 600000);
+
+            // Automatically refresh the loaded item history every 10 minutes
+            setInterval(function () {
+                if (loadedItem != null)
+                    populateItemHistory(loadedItem.itemName, null);
+            }, 600000);
+
+            // Once a minute, update the number in the "For sale as of X minutes ago" label
+            setInterval(function () {
+                updateTimeSinceLastScrapeDisplay();
+            }, 60000);
+        });
+
+        function updateTimeSinceLastScrapeDisplay() {
+            if (loadedItem != null) {
+                var lastScrapeTime = new Date(loadedItem.lastScrapeTime);
+                var nowTime = new Date();
+
+                var millisecondsSinceLastScrape = nowTime - lastScrapeTime;
+                var minutesSinceLastScrape = Math.ceil(millisecondsSinceLastScrape / (1000 * 60)); 
+
+
+                $("#minutesSinceLastScrapeSpan").text(minutesSinceLastScrape.toString() + " minutes");
+            }
+        }
+
+        function getDefaultConfig() {
+            return {
+                "timeframe": "30day",
+                "minPrice": "5000",
+                "maxPrice": "",
+                "maxAmountAboveLowest": "",
+                "maxPercentAboveLowest": "20",
+                "minAmountBelowMedian": "",
+                "minPercentBelowMedian": ""
+            };
+        }
+
+        function loadConfig(config) {
+
+            // Handled previous versions of the config object which might have been saved before the current version of the app
+            if (!config.configVersion) {
+                config = getDefaultConfig();
+            }
+            else if (config.configVersion < 4) {
+                config = getDefaultConfig();
+            }
+
+            $("#timeframeDropdown").val(config.timeframe);
+            $("#minPriceBox").val(config.minPrice);
+            $("#maxPriceBox").val(config.maxPrice);
+            $("#maxAmountAboveLowestBox").val(config.maxAmountAboveLowest);
+            $("#maxPercentAboveLowestBox").val(config.maxPercentAboveLowest);
+            $("#minAmountBelowMedianBox").val(config.minAmountBelowMedian);
+            $("#minPercentBelowMedianBox").val(config.minPercentBelowMedian);
+        }
+
+        function populateItemHistory(itemName, browserStateAction) {
+
+            $.ajax({
+                url: '@Url.Action("ItemHistory", "Home")?itemName=' + encodeURIComponent(itemName),
+
+                success: function (result) {
+
+                    loadedItem = result;
+
+                    // Update the browser state
+                    if (browserStateAction != null) {
+                        var state = { "itemName": result.itemName };
+                        var title = result.itemName;
+                        var url = "?Item=" + result.itemName;
+
+                        if (browserStateAction == "push") {
+                            // don't push duplicate browser states (i.e. if the user clicks the same item link multiple times in a row)
+                            if ((!history.state) || (!history.state.itemName) || history.state.itemName != result.itemName)
+                                history.pushState(state, title, url);
+                        }
+                        else if (browserStateAction == "replace") {
+                            history.replaceState(state, title, url);
+                        }
+                    }
+
+                    $("#selectedItemNameRow").show();
+                    $("#selectedItemNameDiv").text(result.itemName);
+                    $("#historyDiv").show();
+
+                    // Rebuild the history table
+                    var $historyTbody = $("#selectedItemHistoryTable tbody");
+                    $historyTbody.empty();
+                    var isAltRow = false;
+                    var lastRecordAuctionDate = null;
+                    for (var j = 0; j < result.history.length; j++) {
+                        var nextRecord = result.history[j];
+
+                        if (nextRecord.auctionDate != lastRecordAuctionDate) {
+                            $historyTbody.append("<tr><td colspan='3' class='historyDateRow'>" + encodeHtml(nextRecord.auctionDate) + "</td></tr>");
+                            isAltRow = false;
+                        }
+
+                        var $tr = $("<tr class='" + (isAltRow ? "historyRowAlt" : "historyRow") + " " + (nextRecord.isForSaleNow ? "historyRowForSaleNow" : "historyRowExpired") + "'></tr>");
+
+                        $tr.append("<td>" + formatNumberWithCommas(nextRecord.price) + "</td><td>" + (nextRecord.isForSaleNow ? "Yes" : "No") + "</td><td>" + encodeHtml(nextRecord.sellerName) + "</td>");
+                        $historyTbody.append($tr);
+
+                        isAltRow = !isAltRow;
+                        lastRecordAuctionDate = nextRecord.auctionDate;
+                    }
+
+                    // Rebuild the price aggregate table
+                    $("#sevenDayLowestCell").text(formatNumberWithCommas(result.sevenDayLowestPrice));
+                    $("#sevenDayMedianCell").text(formatNumberWithCommas(result.sevenDayMedianPrice));
+                    $("#thirtyDayLowestCell").text(formatNumberWithCommas(result.thirtyDayLowestPrice));
+                    $("#thirtyDayMedianCell").text(formatNumberWithCommas(result.thirtyDayMedianPrice));
+                    $("#ninetyDayLowestCell").text(formatNumberWithCommas(result.ninetyDayLowestPrice));
+                    $("#ninetyDayMedianCell").text(formatNumberWithCommas(result.ninetyDayMedianPrice));
+                    $("#oneYearLowestCell").text(formatNumberWithCommas(result.oneYearLowestPrice));
+                    $("#oneYearMedianCell").text(formatNumberWithCommas(result.oneYearMedianPrice));
+                    $("#lifetimeLowestCell").text(formatNumberWithCommas(result.lifetimeLowestPrice));
+                    $("#lifetimeMedianCell").text(formatNumberWithCommas(result.lifetimeMedianPrice));
+
+                    // Rebuild the item stats table
+                    if (!result.itemStats) {
+                        $("#selectedItemLazLinkRow").hide();
+                        $("#itemStatsWrapper").hide();
+                    }
+                    else {
+                        var lazUrl = "https://www.lazaruseq.com/Alla/?a=item&id=" + result.itemStats.stats[0].parsedStatValue;
+                        $("#selectedItemLazLinkRow").show();
+                        $("#selectedItemLazLink").attr("href", lazUrl);
+                        $("#selectedItemLazLink").text(lazUrl);
+
+                        $("#itemStatsWrapper").empty();
+                        $("#itemStatsWrapper").show();
+                        $("#itemStatsWrapper").append(buildItemStatsHtml(result.itemStats));
+                    }
+
+                    updateTimeSinceLastScrapeDisplay();
+                }
+            });
+        }
+
+        function refreshHotDealz() {
+            var $timeframeDropdown = $("#timeframeDropdown");
+            var $minPriceBox = $("#minPriceBox");
+            var $maxPriceBox = $("#maxPriceBox");
+            var $maxPercentAboveLowestBox = $("#maxPercentAboveLowestBox");
+            var $maxAmountAboveLowestBox = $("#maxAmountAboveLowestBox");
+            var $minAmountBelowMedianBox = $("#minAmountBelowMedianBox");
+            var $minPercentBelowMedianBox = $("#minPercentBelowMedianBox");
+
+
+            // Make sure the filter inputs have valid values before sending them to the server
+            if ($minPriceBox.val().trim().length == 0)
+                $minPriceBox.val("");
+            else
+                $minPriceBox.val(Math.round($minPriceBox.val()));
+
+            if ($maxPriceBox.val().trim().length == 0)
+                $maxPriceBox.val("");
+            else
+                $maxPriceBox.val(Math.round($maxPriceBox.val()));
+
+            if ($minPriceBox.val().length > 0 && parseInt($minPriceBox.val()) > parseInt($maxPriceBox.val()))
+                $maxPriceBox.val("");
+
+            if ($maxPercentAboveLowestBox.val().trim().length == 0)
+                $maxPercentAboveLowestBox.val("");
+            else
+                $maxPercentAboveLowestBox.val(Math.round($maxPercentAboveLowestBox.val()));
+
+            if ($maxAmountAboveLowestBox.val().trim().length == 0)
+                $maxAmountAboveLowestBox.val("");
+            else
+                $maxAmountAboveLowestBox.val(Math.round($maxAmountAboveLowestBox.val()));
+
+            if ($minAmountBelowMedianBox.val().trim().length == 0)
+                $minAmountBelowMedianBox.val("");
+            else
+                $minAmountBelowMedianBox.val(Math.round($minAmountBelowMedianBox.val()));
+
+            if ($minPercentBelowMedianBox.val().trim().length == 0)
+                $minPercentBelowMedianBox.val("");
+            else
+                $minPercentBelowMedianBox.val(Math.round($minPercentBelowMedianBox.val()));
+
+
+            // Save the config values to storage
+            localStorage.setItem("config", JSON.stringify({
+                "configVersion": 4,
+                "timeframe": $timeframeDropdown.val(),
+                "minPrice": $minPriceBox.val(),
+                "maxPrice": $maxPriceBox.val(),
+                "maxAmountAboveLowest": $maxAmountAboveLowestBox.val(),
+                "maxPercentAboveLowest": $maxPercentAboveLowestBox.val(),
+                "minAmountBelowMedian": $minAmountBelowMedianBox.val(),
+                "minPercentBelowMedian": $minPercentBelowMedianBox.val(),
+            }));
+
+            // Build hotDealzUrl
+            var hotDealzUrl = '@Url.Action("HotDealz", "Home")?timeframe=' + $timeframeDropdown.val();
+            if ($minPriceBox.val().length > 0)
+                hotDealzUrl += "&minPrice=" + $minPriceBox.val();
+            if ($maxPriceBox.val().length > 0)
+                hotDealzUrl += "&maxPrice=" + $maxPriceBox.val();
+            if ($maxAmountAboveLowestBox.val().length > 0)
+                hotDealzUrl += "&maxAmountAboveLowest=" + $maxAmountAboveLowestBox.val();
+            if ($maxPercentAboveLowestBox.val().length > 0)
+                hotDealzUrl += "&maxPercentAboveLowest=" + $maxPercentAboveLowestBox.val();
+            if ($minAmountBelowMedianBox.val().length > 0)
+                hotDealzUrl += "&minAmountBelowMedian=" + $minAmountBelowMedianBox.val();
+            if ($minPercentBelowMedianBox.val().length > 0)
+                hotDealzUrl += "&minPercentBelowMedian=" + $minPercentBelowMedianBox.val();
+
+            $.ajax({
+                url: hotDealzUrl,
+
+                success: function (result) {
+
+                    var $tbody = $("#hotDealzTable tbody");
+                    $tbody.empty();
+
+                    if (result.dealz.length == 0) {
+                        $tbody.append("<tr class='dealzRowAlt'><td colspan='9'>Couldn't find any dealz that hot.</td></tr>");
+                    }
+                    else {
+
+                        // create a dictionary of the item stats to use in the code below instead of looping through the array over and over, for a little javascript performance optimization
+                        var itemStatsDict = {};
+                        for (var i = 0; i < result.itemStats.length; i++) {
+                            itemStatsDict[result.itemStats[i].itemName] = result.itemStats[i];
+                        }
+
+                        // rebuild the hot dealz table rows
+                        var isAltRow = false;
+                        for (var i = 0; i < result.dealz.length; i++) {
+                            var nextRecord = result.dealz[i];
+
+                            var $tr = $("<tr class='" + (isAltRow ? "dealzRowAlt" : "dealzRow") + "'></tr>");
+
+                            // build the column with the item name link
+                            var $td = $("<td></td>");
+                            $tr.append($td);
+                            var $itemLink = $("<a class='dealzLink' data-toggle='tooltip'>" + encodeHtml(nextRecord.itemName) + "</a>");
+                            $itemLink.data("itemName", nextRecord.itemName);
+                            $itemLink.click(function () {
+                                populateItemHistory($(this).data("itemName"), "push");
+                                $("#itemLookupTabLink").click();
+                            });
+                            $td.append($itemLink);
+
+                            // if we have stats for this item, then build a hover tooltip to display them
+                            if (itemStatsDict[nextRecord.itemName]) {
+                                $itemLink.tooltip({
+                                    "html": true,
+                                    "placement": "right",
+                                    "title": buildItemStatsTooltipHtml(itemStatsDict[nextRecord.itemName])
+                                });
+                            }
+
+                            // build the rest of the columns
+                            $tr.append("<td>" + formatNumberWithCommas(nextRecord.price) + "</td>");
+                            $tr.append("<td>" + formatNumberWithCommas(nextRecord.lowestPrice) + "</td>");
+                            $tr.append("<td>" + formatNumberWithCommas(nextRecord.amountAboveLowest) + "</td>");
+                            $tr.append("<td>" + nextRecord.percentAboveLowest.toString() + "%</td>");
+                            $tr.append("<td>" + formatNumberWithCommas(nextRecord.medianPrice) + "</td>");
+                            $tr.append("<td>" + formatNumberWithCommas(nextRecord.amountBelowMedian) + "</td>");
+                            $tr.append("<td>" + nextRecord.percentBelowMedian.toString() + "%</td>");
+                            $tr.append("<td>" + nextRecord.sellerName + "</td>");
+
+                            $tbody.append($tr);
+
+                            isAltRow = !isAltRow;
+                        }
+                    }
+                }
+            });
+        }
+
+        function formatNumberWithCommas(x) {
+            if (x == null)
+                return "";
+
+            x = x.toString();
+            var pattern = /(-?\d+)(\d{3})/;
+            while (pattern.test(x))
+                x = x.replace(pattern, "$1,$2");
+            return x;
+        }
+
+        function buildItemStatsHtml(itemStats) {
+            var statsHtml = "";
+
+            statsHtml += "<div class='row itemStatsItemNameRow'>";
+            statsHtml += "  <div class='col-xs-12'>";
+            statsHtml += "      <h4>" + encodeHtml(itemStats.itemName) + "</h4>";
+            statsHtml += "  </div>";
+            statsHtml += "</div>";
+
+            var isAltRow = true;
+            for (var i = 0; i < itemStats.stats.length; i++) {
+                var itemStat = itemStats.stats[i];
+
+                var rowCssClass = isAltRow ? "itemStatsAltRow" : "itemStatsRow";
+
+                if (itemStat.parsedStatName) {
+
+                    // don't show ID stat in the tooltip
+                    if (itemStat.parsedStatName == "ID")
+                        continue;
+
+                    statsHtml += "<div class='row " + rowCssClass + "'>";
+                    statsHtml += "  <div class='col-xs-3'>";
+                    statsHtml += "      " + encodeHtml(itemStat.parsedStatName);
+                    statsHtml += "  </div>";
+                    statsHtml += "  <div class='col-xs-9'>";
+                    if (itemStat.parsedStatName == "Description")
+                        statsHtml += "      <i>" + encodeHtml(itemStat.parsedStatValue) + "</i>";
+                    else
+                        statsHtml += "      " + encodeHtml(itemStat.parsedStatValue);
+                    statsHtml += "  </div>";
+                    statsHtml += "</div>";
+                }
+                else {
+                    statsHtml += "<div class='row " + rowCssClass + "'>";
+                    statsHtml += "  <div class='col-xs-12'>";
+                    statsHtml += "      " + encodeHtml(itemStat.rawLine);
+                    statsHtml += "  </div>";
+                    statsHtml += "</div>";
+                }
+
+                isAltRow = !isAltRow;
+            }
+
+            return statsHtml;
+        }
+
+        function buildItemStatsTooltipHtml(itemStats) {
+            var statsHtml = "";
+
+            statsHtml += "<div class='row itemStatsTooltipItemNameRow'>";
+            statsHtml += "  <div class='col-xs-12'>";
+            statsHtml += "      <h4>" + encodeHtml(itemStats.itemName) + "</h4>";
+            statsHtml += "  </div>";
+            statsHtml += "</div>";
+
+            var isAltRow = true;
+            for (var i = 0; i < itemStats.stats.length; i++) {
+                var itemStat = itemStats.stats[i];
+
+                var rowCssClass = isAltRow ? "itemStatsTooltipAltRow" : "itemStatsTooltipRow";
+
+                if (itemStat.parsedStatName) {
+
+                    // don't show ID stat in the tooltip
+                    if (itemStat.parsedStatName == "ID")
+                        continue;
+
+                    statsHtml += "<div class='row " + rowCssClass + "'>";
+                    statsHtml += "  <div class='col-xs-3'>";
+                    statsHtml += "      " + encodeHtml(itemStat.parsedStatName);
+                    statsHtml += "  </div>";
+                    statsHtml += "  <div class='col-xs-9'>";
+                    if (itemStat.parsedStatName == "Description")
+                        statsHtml += "      <i>" + encodeHtml(itemStat.parsedStatValue) + "</i>";
+                    else
+                        statsHtml += "      " + encodeHtml(itemStat.parsedStatValue);
+                    statsHtml += "  </div>";
+                    statsHtml += "</div>";
+                }
+                else {
+                    statsHtml += "<div class='row " + rowCssClass + "'>";
+                    statsHtml += "  <div class='col-xs-12'>";
+                    statsHtml += "      " + encodeHtml(itemStat.rawLine);
+                    statsHtml += "  </div>";
+                    statsHtml += "</div>";
+                }
+
+                isAltRow = !isAltRow;
+            }
+
+            return statsHtml;
+        }
+
+        function encodeHtml(inputString) {
+            return inputString.replace(/[\u00A0-\u9999<>\&]/g, function (i) {
+                return '&#' + i.charCodeAt(0) + ';';
+            });
+        }
+
+    </script>
+
+}

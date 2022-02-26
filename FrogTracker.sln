@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrogTracker", "FrogTracker\FrogTracker.csproj", "{BC71243A-3EC9-42B2-8726-C8DC10CF1F1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrogTracker.Scraper", "FrogTracker.Scraper\FrogTracker.Scraper.csproj", "{DDC1E652-FF87-45C7-B964-FF443A8FBDA9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC71243A-3EC9-42B2-8726-C8DC10CF1F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC71243A-3EC9-42B2-8726-C8DC10CF1F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC71243A-3EC9-42B2-8726-C8DC10CF1F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC71243A-3EC9-42B2-8726-C8DC10CF1F1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDC1E652-FF87-45C7-B964-FF443A8FBDA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDC1E652-FF87-45C7-B964-FF443A8FBDA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDC1E652-FF87-45C7-B964-FF443A8FBDA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDC1E652-FF87-45C7-B964-FF443A8FBDA9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {70C5ED51-10EA-4AC5-8BE6-B57FEDC9B713}
+	EndGlobalSection
+EndGlobal
