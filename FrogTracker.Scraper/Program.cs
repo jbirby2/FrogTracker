@@ -33,7 +33,7 @@ namespace FrogTracker.Scraper
                 var scrapeInsertDataset = executeQuery(sqlConn, "scrape_insert", scrapeInsertParams);
                 long scrapeID = Convert.ToInt64(scrapeInsertDataset.Tables[0].Rows[0]["scrape_id"]);
 
-                var sleepAfterEachItem = TimeSpan.FromMilliseconds(Int32.Parse(config["MillisecondsToWaitBetweenServerHits"]));
+                var timeToWaitBetweenServerHits = TimeSpan.FromMilliseconds(Int32.Parse(config["MillisecondsToWaitBetweenServerHits"]));
                 var auctionDate = DateTime.UtcNow.Date;
 
                 Console.WriteLine("Starting scrape (scape_id " + scrapeID.ToString() + ", auction_date " + auctionDate.ToShortDateString() + ", pausing " + config["MillisecondsToWaitBetweenServerHits"] + "ms between server hits)");
@@ -248,7 +248,7 @@ namespace FrogTracker.Scraper
                             else
                             {
                                 startIndex += 25;
-                                Thread.Sleep(sleepAfterEachItem);
+                                Thread.Sleep(timeToWaitBetweenServerHits);
                             }
                         }
                         else
