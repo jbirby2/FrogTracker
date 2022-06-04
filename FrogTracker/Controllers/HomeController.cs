@@ -115,16 +115,16 @@ namespace FrogTracker.Controllers
 
                     if (dataSet.Tables[0].Rows.Count > 0)
                     {
-                        model.SevenDayLowestPrice = (int?)dataSet.Tables[0].Rows[0]["seven_day_lowest"];
-                        model.SevenDayMedianPrice = (int?)dataSet.Tables[0].Rows[0]["seven_day_median"];
-                        model.ThirtyDayLowestPrice = (int?)dataSet.Tables[0].Rows[0]["thirty_day_lowest"];
-                        model.ThirtyDayMedianPrice = (int?)dataSet.Tables[0].Rows[0]["thirty_day_median"];
-                        model.NinetyDayLowestPrice = (int?)dataSet.Tables[0].Rows[0]["ninety_day_lowest"];
-                        model.NinetyDayMedianPrice = (int?)dataSet.Tables[0].Rows[0]["ninety_day_median"];
-                        model.OneYearLowestPrice = (int?)dataSet.Tables[0].Rows[0]["one_year_lowest"];
-                        model.OneYearMedianPrice = (int?)dataSet.Tables[0].Rows[0]["one_year_median"];
-                        model.LifetimeLowestPrice = (int?)dataSet.Tables[0].Rows[0]["lifetime_lowest"];
-                        model.LifetimeMedianPrice = (int?)dataSet.Tables[0].Rows[0]["lifetime_median"];
+                        model.SevenDayLowestPrice = convertDbNull(dataSet.Tables[0].Rows[0], "seven_day_lowest");
+                        model.SevenDayMedianPrice = convertDbNull(dataSet.Tables[0].Rows[0], "seven_day_median");
+                        model.ThirtyDayLowestPrice = convertDbNull(dataSet.Tables[0].Rows[0], "thirty_day_lowest");
+                        model.ThirtyDayMedianPrice = convertDbNull(dataSet.Tables[0].Rows[0], "thirty_day_median");
+                        model.NinetyDayLowestPrice = convertDbNull(dataSet.Tables[0].Rows[0], "ninety_day_lowest");
+                        model.NinetyDayMedianPrice = convertDbNull(dataSet.Tables[0].Rows[0], "ninety_day_median");
+                        model.OneYearLowestPrice = convertDbNull(dataSet.Tables[0].Rows[0], "one_year_lowest");
+                        model.OneYearMedianPrice = convertDbNull(dataSet.Tables[0].Rows[0], "one_year_median");
+                        model.LifetimeLowestPrice = convertDbNull(dataSet.Tables[0].Rows[0], "lifetime_lowest");
+                        model.LifetimeMedianPrice = convertDbNull(dataSet.Tables[0].Rows[0], "lifetime_median");
                     }
                 }
 
@@ -228,6 +228,13 @@ namespace FrogTracker.Controllers
             }
         }
 
+        private int? convertDbNull(DataRow row, string columnName)
+        {
+            if (row.IsNull(columnName))
+                return null;
+            else
+                return (int)row[columnName];
+        }
 
 
         // Error handler (asp.net boilerplate code)
