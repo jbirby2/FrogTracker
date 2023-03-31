@@ -10,11 +10,11 @@
 <div class="row">
     <div class="col-xs-12">
         <center>
-            <h3>Oh hullo there, welcome to FrogTracker.  For frog eyes only!!</h3>
+            <h3>Welcome to FrogTracker, an auction history tool for <a class="lazarusLink" href="https://www.lazaruseq.com/Wiki/index.php/Main_Page">Project Lazarus</a></h3>
             <h4>
                 <a class="sourceCodeLink" href="https://github.com/bigvigg/FrogTracker" target="wndSourceCode">source code</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a class="sourceCodeLink" href="@Url.Content("frogtracker-mysql-dump.zip")" target="wndSourceCode">database</a>
+                <a class="sourceCodeLink" href="@Url.Content("frogtracker-mysql-dump.zip")" target="wndSourceCode">download database</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a class="sourceCodeLink" href="mailto:frogtracker2@gmail.com" target="wndSourceCode">contact</a>
             </h4>
@@ -30,7 +30,7 @@
                 <a id="itemLookupTabLink" data-toggle="pill" href="#ItemLookup">Item Lookup</a>
             </li>
             <li>
-                <a data-toggle="pill" href="#HotDealz">Hot Dealz</a>
+                <a data-toggle="pill" href="#HotDealz">Hot Deals</a>
             </li>
         </ul>
         <div class="tab-content">
@@ -45,7 +45,7 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-11">
-                        <input id="searchBox" type="text" class="form-control" placeholder="Start typing an item name to search" maxlength="500" />
+                        <input id="searchBox" type="text" class="form-control" placeholder="Start typing an item name to search, such as 'sword'" maxlength="500" />
                     </div>
                     <div class="col-xs-1">
                         <button id="searchResetButton" type="button" class="btn">Reset</button>
@@ -143,8 +143,8 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <center>
-                            <h1>Hot Dealz!!!</h1>
-                            <h4>For sale in bazaar right now!</h4>
+                            <h1>Hot Deals</h1>
+                            <h4>For sale in game right now!  Use the filter boxes below to adjust the results.</h4>
                         </center>
                     </div>
                 </div>
@@ -301,6 +301,22 @@
         .body-content {
             padding-left: 15px;
             padding-right: 15px;
+        }
+
+        .lazarusLink {
+            text-decoration: underline;
+            color: #ffffff;
+        }
+
+        .lazarusLink:visited {
+            text-decoration: underline;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .lazarusLink:hover {
+            text-decoration: underline;
+            color: #00fff7;
         }
 
         .sourceCodeLink {
@@ -814,7 +830,7 @@
                     $tbody.empty();
 
                     if (result.dealz.length == 0) {
-                        $tbody.append("<tr class='dealzRowAlt'><td colspan='9'>Couldn't find any dealz that hot.</td></tr>");
+                        $tbody.append("<tr class='dealzRowAlt'><td colspan='9'>Couldn't find any deals that hot.</td></tr>");
                     }
                     else {
 
