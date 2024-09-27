@@ -14,7 +14,7 @@ using System.Web;
 
 namespace FrogTracker.Scraper
 {
-    class Program
+    internal class Program
     {
         private static StreamWriter logFileWriter;
 
@@ -351,7 +351,7 @@ namespace FrogTracker.Scraper
             } // end outermost try-catch-finally
         }
 
-        private static DataSet executeQuery(MySqlConnection sqlConn, string procName, Dictionary<string,object> procParams)
+        private static DataSet executeQuery(MySqlConnection sqlConn, string procName, Dictionary<string, object> procParams)
         {
             using (var cmd = new MySqlCommand(procName, sqlConn))
             using (var da = new MySqlDataAdapter(cmd))
@@ -500,5 +500,6 @@ namespace FrogTracker.Scraper
             }
             catch { }
         }
+
     }
 }

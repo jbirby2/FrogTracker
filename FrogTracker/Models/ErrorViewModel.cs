@@ -1,5 +1,3 @@
-using System;
-
 namespace FrogTracker.Models
 {
     public class ErrorViewModel
