@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrogTracker", "FrogTracker\FrogTracker.csproj", "{BC71243A-3EC9-42B2-8726-C8DC10CF1F1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrogTracker", "FrogTracker\FrogTracker.csproj", "{1DF48522-FCD5-4609-B2C4-731F7B3DD72D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrogTracker.Scraper", "FrogTracker.Scraper\FrogTracker.Scraper.csproj", "{DDC1E652-FF87-45C7-B964-FF443A8FBDA9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrogTracker.Scraper", "FrogTracker.Scraper\FrogTracker.Scraper.csproj", "{1D8BF70A-BD5F-4A68-B45E-E27580A933EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,19 +13,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BC71243A-3EC9-42B2-8726-C8DC10CF1F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BC71243A-3EC9-42B2-8726-C8DC10CF1F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BC71243A-3EC9-42B2-8726-C8DC10CF1F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BC71243A-3EC9-42B2-8726-C8DC10CF1F1B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDC1E652-FF87-45C7-B964-FF443A8FBDA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDC1E652-FF87-45C7-B964-FF443A8FBDA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDC1E652-FF87-45C7-B964-FF443A8FBDA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDC1E652-FF87-45C7-B964-FF443A8FBDA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DF48522-FCD5-4609-B2C4-731F7B3DD72D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DF48522-FCD5-4609-B2C4-731F7B3DD72D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DF48522-FCD5-4609-B2C4-731F7B3DD72D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DF48522-FCD5-4609-B2C4-731F7B3DD72D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D8BF70A-BD5F-4A68-B45E-E27580A933EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D8BF70A-BD5F-4A68-B45E-E27580A933EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D8BF70A-BD5F-4A68-B45E-E27580A933EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D8BF70A-BD5F-4A68-B45E-E27580A933EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {70C5ED51-10EA-4AC5-8BE6-B57FEDC9B713}
+		SolutionGuid = {0AFE3F5A-C8A8-4922-9CAB-4FE19954E152}
 	EndGlobalSection
 EndGlobal

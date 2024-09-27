@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+using FrogTracker.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using MySql.Data.MySqlClient;
+using System;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using FrogTracker.Models;
-using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
-using System.Data;
 
 namespace FrogTracker.Controllers
 {
     public class HomeController : Controller
     {
-        private IConfiguration config;
+        private readonly ILogger<HomeController> logger;
+        private readonly IConfiguration config;
 
-        public HomeController(IConfiguration configuration)
+        public HomeController(ILogger<HomeController> pLogger, IConfiguration pConfiguration)
         {
-            config = configuration;
+            logger = pLogger;
+            config = pConfiguration;
         }
 
         public IActionResult Index(string item = null)
@@ -236,8 +237,6 @@ namespace FrogTracker.Controllers
                 return (int)row[columnName];
         }
 
-
-        // Error handler (asp.net boilerplate code)
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
