@@ -76,7 +76,7 @@ namespace FrogTracker.Scraper
                                     {
                                         // Parse auction data out of the HTML
                                         string itemName = itemLink.InnerText.Trim();
-                                        int price = Convert.ToInt32(itemLink.ParentNode.NextSibling.NextSibling.InnerText.Trim().Replace(",", "").Split(' ')[0]);
+                                        int price = Convert.ToInt32(itemLink.ParentNode.NextSibling.NextSibling.InnerText.Trim().Replace(",", "").Replace("p", "").Replace("g", "").Replace("s", "").Replace("c", ""));
                                         string sellerName = itemLink.ParentNode.NextSibling.NextSibling.NextSibling.NextSibling.Descendants("a").First().InnerText.Trim();
 
                                         // Get auctionDataset
@@ -128,13 +128,7 @@ namespace FrogTracker.Scraper
                                         // Parse item data out of HTML
                                         var itemPopUpDiv = resultsPageDoc.DocumentNode.Descendants("div").Where(d => d.Id == itemLink.Attributes["hoverChild"].Value.Substring(1)).First();
                                         var itemDetailsUrl = itemPopUpDiv.ChildNodes[1].ChildNodes[1].Attributes["href"].Value;
-                                        string itemID = itemDetailsUrl.Substring(itemDetailsUrl.LastIndexOf('=') + 1);
-
-                                        var imageNode = itemPopUpDiv.ChildNodes[3].ChildNodes[1];
-
-                                        // TODO: pull and store images if they don't exist
-                                        string imageUrl = "https://www.lazaruseq.com/Magelo/" + itemPopUpDiv.ChildNodes[3].ChildNodes[1].Attributes["src"].Value;
-
+                                        string itemID = itemDetailsUrl.Substring(itemDetailsUrl.LastIndexOf('/') + 1);
 
                                         // Delete and rebuild the item_stats rows
                                         var transaction = sqlConn.BeginTransaction();
@@ -146,25 +140,10 @@ namespace FrogTracker.Scraper
                                             executeQuery(sqlConn, "item_stats_delete", itemStatsDeleteParams);
 
                                             // Insert our own line for the item's "ID" stat
-                                            var itemStatsInsertParams = new Dictionary<string, object>();
-                                            itemStatsInsertParams.Add("p_scrape_id", scrapeID);
-                                            itemStatsInsertParams.Add("p_item_name", itemName);
-                                            itemStatsInsertParams.Add("p_line_number", 1);
-                                            itemStatsInsertParams.Add("p_raw_line", "ID: " + itemID);
-                                            itemStatsInsertParams.Add("p_parsed_stat_name", "ID");
-                                            itemStatsInsertParams.Add("p_parsed_stat_value", itemID);
-                                            try
-                                            {
-                                                itemStatsInsertParams.Add("p_parsed_stat_value_double", Double.Parse(itemID));
-                                            }
-                                            catch
-                                            {
-                                                itemStatsInsertParams.Add("p_parsed_stat_value_double", null);
-                                            }
-                                            executeQuery(sqlConn, "item_stats_insert", itemStatsInsertParams);
+                                            executeInsertItemStatQuery(scrapeID, itemName, 1, "ID: " + itemID, "ID", itemID, sqlConn);
 
                                             // Insert lines for the rest of the item's stats
-                                            var nextStatLineNode = imageNode.NextSibling;
+                                            var nextStatLineNode = itemPopUpDiv.ChildNodes[3].ChildNodes[4];
                                             bool tagsLineAdded = false;
                                             string rawLine = "";
                                             int lineNumber = 2;
@@ -177,50 +156,81 @@ namespace FrogTracker.Scraper
                                                     rawLine = HttpUtility.HtmlDecode(rawLine.Trim());
                                                     rawLine = Regex.Replace(rawLine, @"\s+", " "); // condense any places in the string where there are multiple spaces in a row
 
-                                                    writeLog("     " + rawLine);
-
-                                                    itemStatsInsertParams.Clear();
-                                                    itemStatsInsertParams.Add("p_scrape_id", scrapeID);
-                                                    itemStatsInsertParams.Add("p_item_name", itemName);
-                                                    itemStatsInsertParams.Add("p_line_number", lineNumber);
-                                                    itemStatsInsertParams.Add("p_raw_line", rawLine);
-                                                    if (rawLine.Contains(':'))
+                                                    if (String.IsNullOrWhiteSpace(rawLine) == false)
                                                     {
-                                                        int firstColonIndex = rawLine.IndexOf(':');
-                                                        string parsedStatName = rawLine.Substring(0, firstColonIndex).Trim();
-                                                        string parsedStatValue = rawLine.Substring(firstColonIndex + 1).Trim();
+                                                        writeLog("     " + rawLine);
 
-                                                        itemStatsInsertParams.Add("p_parsed_stat_name", parsedStatName);
-                                                        itemStatsInsertParams.Add("p_parsed_stat_value", parsedStatValue);
-                                                        try
+                                                        if (rawLine.StartsWith("Effect:"))
                                                         {
-                                                            itemStatsInsertParams.Add("p_parsed_stat_value_double", Double.Parse(parsedStatValue));
-                                                        }
-                                                        catch
-                                                        {
-                                                            itemStatsInsertParams.Add("p_parsed_stat_value_double", null);
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        if (tagsLineAdded)
-                                                        {
-                                                            itemStatsInsertParams.Add("p_parsed_stat_name", "Description");
+                                                            executeInsertItemStatQuery(scrapeID, itemName, lineNumber, rawLine, "Effect", rawLine.Substring(rawLine.IndexOf(':') + 1).Trim(), sqlConn);
+                                                            lineNumber++;
                                                         }
                                                         else
                                                         {
-                                                            itemStatsInsertParams.Add("p_parsed_stat_name", "Tags");
-                                                            tagsLineAdded = true;
+                                                            int colonCount = rawLine.Count(rawLineChar => rawLineChar == ':');
+                                                            if (colonCount == 0)
+                                                            {
+                                                                string statName;
+                                                                if (tagsLineAdded)
+                                                                {
+                                                                    statName = "Description";
+                                                                }
+                                                                else
+                                                                {
+                                                                    statName = "Tags";
+                                                                    tagsLineAdded = true;
+                                                                }
+
+                                                                executeInsertItemStatQuery(scrapeID, itemName, lineNumber, rawLine, statName, rawLine, sqlConn);
+                                                                lineNumber++;
+                                                            }
+                                                            else if (colonCount == 1)
+                                                            {
+                                                                // Only 1 stat on this line.
+                                                                string[] rawLineParts = rawLine.Split(':');
+                                                                executeInsertItemStatQuery(scrapeID, itemName, lineNumber, rawLine, rawLineParts[0].Trim(), rawLineParts[1].Trim(), sqlConn);
+                                                                lineNumber++;
+                                                            }
+                                                            else
+                                                            {
+                                                                // Multiple stats on this line.
+                                                                string[] rawLineParts = rawLine.Split(':');
+                                                                string parsedStatName = "";
+                                                                string parsedStatValue = "";
+                                                                for (int i = 0; i < rawLineParts.Length; i++)
+                                                                {
+                                                                    if (i == 0)
+                                                                    {
+                                                                        // First index.
+                                                                        // Start the first stat.
+                                                                        parsedStatName = rawLineParts[i].Trim();
+                                                                    }
+                                                                    else if (i < rawLineParts.Length - 1)
+                                                                    {
+                                                                        string[] subParts = rawLineParts[i].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                                                                        parsedStatValue = subParts[0].Trim();
+                                                                        executeInsertItemStatQuery(scrapeID, itemName, lineNumber, rawLine, parsedStatName, parsedStatValue, sqlConn);
+                                                                        lineNumber++;
+
+                                                                        // Start the next stat
+                                                                        parsedStatName = subParts[1].Trim();
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        // Last index.
+                                                                        // Finish the last stat.
+                                                                        parsedStatValue = rawLineParts[i].Trim();
+                                                                        executeInsertItemStatQuery(scrapeID, itemName, lineNumber, rawLine, parsedStatName, parsedStatValue, sqlConn);
+                                                                        lineNumber++;
+                                                                    }
+                                                                }
+                                                            }
                                                         }
-                                                        itemStatsInsertParams.Add("p_parsed_stat_value", rawLine);
-                                                        itemStatsInsertParams.Add("p_parsed_stat_value_double", null);
+
+                                                        // Reset variables for the next stats line
+                                                        rawLine = "";
                                                     }
-
-                                                    executeQuery(sqlConn, "item_stats_insert", itemStatsInsertParams);
-
-                                                    // Reset variables for the next stats line
-                                                    rawLine = "";
-                                                    lineNumber++;
                                                 }
                                                 else
                                                 {
@@ -349,6 +359,27 @@ namespace FrogTracker.Scraper
                 catch { }
 
             } // end outermost try-catch-finally
+        }
+
+        private static void executeInsertItemStatQuery(long scrapeID, string itemName, int lineNumber, string rawLine, string statName, string statValue, MySqlConnection sqlConn)
+        {
+            // Insert our own line for the item's "ID" stat
+            var itemStatsInsertParams = new Dictionary<string, object>();
+            itemStatsInsertParams.Add("p_scrape_id", scrapeID);
+            itemStatsInsertParams.Add("p_item_name", itemName);
+            itemStatsInsertParams.Add("p_line_number", lineNumber);
+            itemStatsInsertParams.Add("p_raw_line", rawLine);
+            itemStatsInsertParams.Add("p_parsed_stat_name", statName);
+            itemStatsInsertParams.Add("p_parsed_stat_value", statValue);
+            try
+            {
+                itemStatsInsertParams.Add("p_parsed_stat_value_double", Double.Parse(statValue));
+            }
+            catch
+            {
+                itemStatsInsertParams.Add("p_parsed_stat_value_double", null);
+            }
+            executeQuery(sqlConn, "item_stats_insert", itemStatsInsertParams);
         }
 
         private static DataSet executeQuery(MySqlConnection sqlConn, string procName, Dictionary<string, object> procParams)
